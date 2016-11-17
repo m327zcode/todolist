@@ -59,7 +59,7 @@ include_once('config.php');
 	<form action="simpan.php" method="post">
 		<div>
 			<center>
-				<label><?php echo $i ." November ". date('Y'); ?></label>
+				<label><?php $mot = date("F"); echo $i ." $mot ". date('Y'); ?> </label>
 				<hr/>
 			</center>
 		</div>
@@ -69,36 +69,29 @@ include_once('config.php');
 			<!-- menampilkan data dari database -->
 			<?php
 			$result = mysqli_query($mysqli, "SELECT * FROM kegiatan_jenis ORDER BY id ASC");
+
 			while ($res = mysqli_fetch_array($result)) {
-				?>
-				<div>
-					<?php $tang = date('Y-m-d');
-					?>
-					<input type="hidden" name="tgl" value="<?php echo $tang ?>">
+				$tang = date('Y-m-').$i;?>
 
-					<?php
-					$que = "SELECT * FROM kegiatan_history";
-					$que = mysqli_query($mysqli, $que);
-					$real = 'yes';
-					if($real == 'yes'){
-						?>
-						<input type='checkbox' name='id_keg[<?php echo $res['id'] ?>]' checked="checked"><?php echo $res['nama_kegiatan'] ?>
-						<?php
-					}else{
-					 ?>
+				<input type="hidden" name="tgl" value="<?php echo $tang;?>">
 
-						<input type='checkbox' name='id_keg[<?php echo $res['id'] ?>]' ><?php echo $res['nama_kegiatan'] ?>
-					<?php
-					} ?>
+				<?php
+				$keg_id = $res['id'];
+				$c = '';
 
-				</div>
-			<?php
-			}
+				$check = mysqli_query($mysqli, "SELECT * FROM kegiatan_history WHERE kegiatan_id = $keg_id AND tgl = '$tang'");
+
+				while ($data = mysqli_fetch_array($check)) {
+					if($data['realisasi'] == 'ya'){
+						$c = 'checked';
+					} else {
+						$c = '';
+					}
+				}
 			 ?>
+			 <input type='checkbox' <?php echo $c ?> name='id_keg[<?php echo $res['id'];?>]' > <?php echo $res['nama_kegiatan'] ?><br>
+			 <?php } ?>
 
-		</div>
-
-		<div>
 			<!-- <input type='text' name='input'> -->
 			<button type="submit">tambah</button>
 		</div>
